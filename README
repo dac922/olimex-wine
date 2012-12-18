@@ -1,0 +1,56 @@
+
+!!! use with caution, this software may !!!
+!!!     - kill your hardware            !!!
+!!!     - corrupt your software         !!!
+!!!     - waste your time               !!!
+
+
+# idea and most of code is taken from here:
+  http://gatopeichs.pbworks.com/#USBD2XXdriverforWine
+# but i did not get it work, so i modified all
+# neccessary parts for use with msp430-gdbproxy
+
+# Olimex MSP430 JTAG Tiny:
+#    load cp210x driver for serial interface
+
+  sudo modprobe cp210x vendor=0x15ba product=0x0002
+
+# Olimex MSP430 JTAG ISO:
+#    load ftdi driver for serial interface
+
+  sudo modprobe ftdi_sio vendor=0x15ba product=0x0008
+
+# connect olimex
+# if interface is not /dev/ttyUSB0 change
+#    ftd2xx_main.c    (JTAG ISO)
+#    SiUSBXp_main.c   (JTAG Tiny)
+# be sure to have wine development files installed
+# build wine ftdi dll, siusbxp dll and install both
+#
+# please edit Makefile to select -TINY or -ISO
+
+  make
+  sudo make install
+
+# copy following win files to your directory
+
+  msp430-gdbproxy.exe          ; from ti
+  HIL.dll                      ; from olimex driver
+  MSP430.dll                   ; from olimex driver
+
+# do not copy FTD2XX.DLL and SiUSBXp.dll !
+
+# if you want heavy debugging output
+
+  export WINEDEBUG=trace+ftd2xx,trace+siusbxp
+
+# now start msp430-gdbproxy
+
+  wine msp430-gdbproxy.exe --port=3333 msp430 TIUSB
+
+#
+
+# have fun!
+#
+# grx
+# Stefan
